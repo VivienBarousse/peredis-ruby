@@ -98,6 +98,18 @@ describe Peredis::Storage::Memory do
           expect(subject.smembers(key)).to eq(Set.new(%w(value1 value2)))
         end
 
+        context "with more than one value to add" do
+          it "should add all the values" do
+            subject.sadd(key, "value1", "value2", "value3")
+            expect(subject.smembers(key)).to eq(Set.new(%w(value1 value2 value3)))
+          end
+
+          it "should not add any duplicate values" do
+            subject.sadd(key, "value1", "value2", "value1")
+            expect(subject.smembers(key)).to eq(Set.new(%w(value1 value2)))
+          end
+        end
+
         context "when the key exists and is not a set" do
           it "should raise an error" do
             subject.set(key, "value")

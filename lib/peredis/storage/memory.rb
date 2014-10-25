@@ -36,8 +36,10 @@ module Peredis
       # Sets
       # -
 
-      def sadd(key, value)
-        find_set(key, true) << value
+      def sadd(key, *values)
+        values.each do |value|
+          find_set(key, true) << value
+        end
       end
 
       def smembers(key)
