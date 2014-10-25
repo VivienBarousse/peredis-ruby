@@ -51,6 +51,10 @@ module Peredis
         set && set.include?(value)
       end
 
+      def scard(key)
+        find_set(key).count
+      end
+
       private
 
       def find_set(key, create = false)

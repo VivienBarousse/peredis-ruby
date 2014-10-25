@@ -179,7 +179,19 @@ describe Peredis::Storage::Memory do
 
         context "when the value is not in the set" do
           it "should return false" do
+            subject.sadd(key, "another_value")
             expect(subject.sismember(key, "value")).to be(false)
+          end
+        end
+
+        context "when the key doesn't exist" do
+          it "should return false" do
+            subject.sismember(key, "value")
+          end
+
+          it "should not create the key" do
+            subject.sismember(key, "value")
+            expect(subject.exists(key)).to be(false)
           end
         end
 
@@ -188,6 +200,40 @@ describe Peredis::Storage::Memory do
             subject.set(key, "value")
             expect {
               subject.sismember(key, "value")
+            }.to raise_error
+          end
+        end
+      end
+
+      describe "#scard" do
+        it "should return the cardinality of the set" do
+          subject.sadd(key, "value1", "value2", "value3")
+          expect(subject.scard(key)).to eq(3)
+        end
+
+        context "when there are duplicates" do
+          it "should not count duplicates" do
+            subject.sadd(key, "value1", "value2", "value1")
+            expect(subject.scard(key)).to eq(2)
+          end
+        end
+
+        context "when the key doesn't exist" do
+          it "should return 0" do
+            expect(subject.scard(key)).to eq(0)
+          end
+
+          it "should not create it" do
+            subject.scard(key)
+            expect(subject.exists(key)).to be(false)
+          end
+        end
+
+        context "when the key is of the wrong type" do
+          it "should raise an errror" do
+            subject.set(key, "value")
+            expect {
+              subject.scard(key)
             }.to raise_error
           end
         end
