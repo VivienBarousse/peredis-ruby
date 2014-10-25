@@ -16,6 +16,10 @@ module Peredis
         @keys.has_key?(key)
       end
 
+      def del(key)
+        !!@keys.delete(key)
+      end
+
       # -
       # Strings
       # -

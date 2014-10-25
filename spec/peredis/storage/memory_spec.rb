@@ -27,6 +27,40 @@ describe Peredis::Storage::Memory do
           end
         end
       end
+
+      describe "#del" do
+        context "when the key exists" do
+          it "should return true" do
+            subject.set("key", "value")
+            expect(subject.del("key")).to be(true)
+          end
+
+          it "should delete the key" do
+            subject.del("key")
+            expect(subject.exists("key")).to be(false)
+          end
+        end
+
+        context "when the key doesn't exist" do
+          it "should return false" do
+            expect(subject.del("key")).to be(false)
+          end
+
+          it "should not create the key" do
+            subject.del("key")
+            expect(subject.exists("key")).to be(false)
+          end
+        end
+
+        context "when there are other keys" do
+          it "should not delete other keys" do
+            subject.set("key", "value")
+            subject.set("key1", "value1")
+            subject.del("key")
+            expect(subject.exists("key1")).to be(true)
+          end
+        end
+      end
     end
 
     describe "strings" do
