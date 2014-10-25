@@ -44,6 +44,11 @@ module Peredis
         find_set(key).dup
       end
 
+      def sismember(key, value)
+        set = find_set(key)
+        set && set.include?(value)
+      end
+
       private
 
       def find_set(key, create = false)

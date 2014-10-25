@@ -156,6 +156,30 @@ describe Peredis::Storage::Memory do
           end
         end
       end
+
+      describe "#sismember" do
+        context "when the value is in the set" do
+          it "should return true" do
+            subject.sadd(key, "value")
+            expect(subject.sismember(key, "value")).to be(true)
+          end
+        end
+
+        context "when the value is not in the set" do
+          it "should return false" do
+            expect(subject.sismember(key, "value")).to be(false)
+          end
+        end
+
+        context "when the key is of the wrong type" do
+          it "should raise and error" do
+            subject.set(key, "value")
+            expect {
+              subject.sismember(key, "value")
+            }.to raise_error
+          end
+        end
+      end
     end
   end
 end
