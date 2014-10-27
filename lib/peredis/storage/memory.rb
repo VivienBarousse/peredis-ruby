@@ -16,8 +16,10 @@ module Peredis
         @keys.has_key?(key)
       end
 
-      def del(key)
-        !!@keys.delete(key)
+      def del(*keys)
+        keys.count do |key|
+          !!@keys.delete(key)
+        end
       end
 
       # -

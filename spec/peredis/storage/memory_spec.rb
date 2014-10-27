@@ -30,9 +30,9 @@ describe Peredis::Storage::Memory do
 
       describe "#del" do
         context "when the key exists" do
-          it "should return true" do
+          it "should return the number of deleted keys" do
             subject.set("key", "value")
-            expect(subject.del("key")).to be(true)
+            expect(subject.del("key")).to be(1)
           end
 
           it "should delete the key" do
@@ -42,8 +42,8 @@ describe Peredis::Storage::Memory do
         end
 
         context "when the key doesn't exist" do
-          it "should return false" do
-            expect(subject.del("key")).to be(false)
+          it "should return the numbers of deleted keys" do
+            expect(subject.del("key")).to be(0)
           end
 
           it "should not create the key" do
@@ -58,6 +58,41 @@ describe Peredis::Storage::Memory do
             subject.set("key1", "value1")
             subject.del("key")
             expect(subject.exists("key1")).to be(true)
+          end
+        end
+
+        describe "with more than one key to delete" do
+          it "should delete all the keys" do
+            subject.set("key", "value")
+            subject.set("key1", "value1")
+            subject.del("key", "key1")
+            expect(subject.exists("key")).to be(false)
+            expect(subject.exists("key1")).to be(false)
+          end
+
+          it "should return the number of keys deleted" do
+            subject.set("key", "value")
+            subject.set("key1", "value1")
+            expect(subject.del("key", "key1")).to eq(2)
+          end
+
+          context "when not all the keys exist" do
+            it "should delete the existing keys" do
+              subject.set("key", "value")
+              subject.del("key", "key1")
+              expect(subject.exists("key")).to be(false)
+            end
+
+            it "should not create the non-existing keys" do
+              subject.set("key", "value")
+              subject.del("key", "key1")
+              expect(subject.exists("key1")).to be(false)
+            end
+
+            it "should return just the number of deleted keys" do
+              subject.set("key", "value")
+              expect(subject.del("key", "key1")).to eq(1)
+            end
           end
         end
       end
