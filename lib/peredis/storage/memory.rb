@@ -13,7 +13,7 @@ module Peredis
       # -
 
       def exists(key)
-        @keys.has_key?(key)
+        @keys.has_key?(key) ? 1 : 0
       end
 
       def del(*keys)
