@@ -8,6 +8,8 @@ module Peredis
 
       def next
         case input.read(1)
+        when ':'
+          next_integer
         when '+'
           next_string
         when '$'
@@ -16,6 +18,10 @@ module Peredis
       end
 
       private
+
+      def next_integer
+        Integer(input.readline.strip)
+      end
 
       def next_string
         input.readline.strip

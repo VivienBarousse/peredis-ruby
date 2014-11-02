@@ -6,6 +6,43 @@ describe Peredis::Resp::Parser do
   let(:input) { StringIO.new(data) }
   subject { described_class.new(input) }
 
+  describe "integers" do
+    let(:data) { ":12\r\n" }
+
+    it "should return the integer" do
+      expect(subject.next).to eq(12)
+    end
+
+    it "should consume the whole buffer" do
+      subject.next
+      expect(input.read).to eq("")
+    end
+
+    describe "negative integers" do
+      let(:data) { ":-12\r\n" }
+
+      it "should return the negative integer" do
+        expect(subject.next).to eq(-12)
+      end
+    end
+
+    describe "large integers" do
+      let(:data) { ":1234567890123456789012345678901234567890\r\n" }
+
+      it "should return the long integer, without an overflow" do
+        expect(subject.next).to eq(1234567890123456789012345678901234567890)
+      end
+    end
+
+    describe "zero" do
+      let(:data) { ":0\r\n" }
+
+      it "should return zero" do
+        expect(subject.next).to eq(0)
+      end
+    end
+  end
+
   describe "simple strings" do
     let(:data) { "+foobar\r\n" }
 
@@ -83,6 +120,16 @@ describe Peredis::Resp::Parser do
       it "should return each string, in order" do
         expect(subject.next).to eq("foo")
         expect(subject.next).to eq("bar")
+      end
+    end
+
+    describe "multiple integers" do
+      let(:data) { ":1\r\n:2\r\n:3\r\n" }
+
+      it "should return each integer, in order" do
+        expect(subject.next).to eq(1)
+        expect(subject.next).to eq(2)
+        expect(subject.next).to eq(3)
       end
     end
   end
