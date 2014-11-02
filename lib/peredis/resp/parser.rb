@@ -14,6 +14,8 @@ module Peredis
           next_string
         when '$'
           next_bulk_string
+        when '*'
+          next_array
         end
       end
 
@@ -28,7 +30,7 @@ module Peredis
       end
 
       def next_bulk_string
-        length = Integer(input.readline.strip)
+        length = next_integer
 
         # Support for null bulk strings
         if length < 0
@@ -41,6 +43,17 @@ module Peredis
         input.readline
 
         string
+      end
+
+      def next_array
+        length = next_integer
+
+        # Support for null arrays
+        return nil if length < 0
+
+        (1..length).map do
+          self.next
+        end
       end
 
       attr_reader :input

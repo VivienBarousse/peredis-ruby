@@ -104,6 +104,46 @@ describe Peredis::Resp::Parser do
     end
   end
 
+  describe "arrays" do
+    let(:data) { "*2\r\n$3\r\nfoo\r\n$3\r\nbar\r\n" }
+
+    it "should return the array" do
+      expect(subject.next).to eq(["foo", "bar"])
+    end
+
+    describe "empty array" do
+      let(:data) { "*0\r\n" }
+
+      it "should return the empty array" do
+        expect(subject.next).to eq([])
+      end
+    end
+
+    describe "null array" do
+      let(:data) { "*-1\r\n" }
+
+      it "should return nil" do
+        expect(subject.next).to eq(nil)
+      end
+    end
+
+    describe "multiple data types" do
+      let(:data) { "*4\r\n+foo\r\n$3\r\nbar\r\n$-1\r\n:123\r\n" }
+
+      it "should return the correct array" do
+        expect(subject.next).to eq(["foo", "bar", nil, 123])
+      end
+    end
+
+    describe "recursive arrays" do
+      let(:data) { "*2\r\n+a\r\n*2\r\n+b\r\n+c" }
+
+      it "should return an array of arrays" do
+        expect(subject.next).to eq(['a', ['b', 'c']])
+      end
+    end
+  end
+
   describe "multiple objects" do
     describe "multiple strings" do
       let(:data) { "+abc\r\n+def\r\n" }
