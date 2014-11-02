@@ -33,9 +33,7 @@ module Peredis
         length = next_integer
 
         # Support for null bulk strings
-        if length < 0
-          return nil
-        end
+        return nil if length < 0
 
         string = input.read(length)
 

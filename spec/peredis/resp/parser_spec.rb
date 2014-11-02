@@ -61,7 +61,7 @@ describe Peredis::Resp::Parser do
 
   describe "bulk strings" do
     let(:data) { "$6\r\nfoobar\r\n" }
-    
+
     it "should return the string object" do
       expect(subject.next).to eq("foobar")
     end
