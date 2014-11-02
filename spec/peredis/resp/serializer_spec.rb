@@ -5,6 +5,13 @@ describe Peredis::Resp::Serializer do
   let(:output) { StringIO.new() }
   subject { described_class.new(output) }
 
+  describe "nil" do
+    it "should serialize nil as a null bulk string" do
+      subject.write(nil)
+      expect(output.string).to eq("$-1\r\n")
+    end
+  end
+
   describe "strings" do
     it "should serialize strings" do
       subject.write("foobar")

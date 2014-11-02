@@ -10,6 +10,8 @@ module Peredis
 
       def write(object)
         case object
+        when NilClass
+          write_nil
         when String
           write_string(object)
         end
@@ -18,6 +20,11 @@ module Peredis
       private
 
       attr_reader :output
+
+      def write_nil
+        output << '$-1'
+        output << END_OF_LINE
+      end
 
       def write_string(string)
         output << '$'
