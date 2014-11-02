@@ -12,6 +12,8 @@ module Peredis
         case object
         when NilClass
           write_nil
+        when Integer
+          write_integer(object)
         when String
           write_string(object)
         when Array
@@ -25,6 +27,12 @@ module Peredis
 
       def write_nil
         output << '$-1'
+        output << END_OF_LINE
+      end
+
+      def write_integer(integer)
+        output << ':'
+        output << integer.to_s
         output << END_OF_LINE
       end
 

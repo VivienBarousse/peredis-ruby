@@ -12,6 +12,13 @@ describe Peredis::Resp::Serializer do
     end
   end
 
+  describe "integers" do
+    it "should serialize the integer" do
+      subject.write(12)
+      expect(output.string).to eq(":12\r\n")
+    end
+  end
+
   describe "strings" do
     it "should serialize strings" do
       subject.write("foobar")
