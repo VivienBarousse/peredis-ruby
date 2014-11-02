@@ -12,6 +12,10 @@ module Peredis
       # Generic
       # -
 
+      def ping
+        "pong"
+      end
+
       def exists(key)
         @keys.has_key?(key) ? 1 : 0
       end

@@ -13,6 +13,12 @@ describe Peredis::Storage::Memory do
     end
 
     describe "generic methods" do
+      describe "#ping" do
+        it "should return pong" do
+          expect(subject.ping).to eq("pong")
+        end
+      end
+
       describe "#exists" do
         context "when the key exists" do
           it "should return true" do
