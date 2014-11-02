@@ -14,6 +14,8 @@ module Peredis
           write_nil
         when String
           write_string(object)
+        when Array
+          write_array(object)
         end
       end
 
@@ -32,6 +34,15 @@ module Peredis
         output << END_OF_LINE
         output << string
         output << END_OF_LINE
+      end
+
+      def write_array(array)
+        output << '*'
+        output << array.length.to_s
+        output << END_OF_LINE
+        array.each do |element|
+          write(element)
+        end
       end
 
     end
