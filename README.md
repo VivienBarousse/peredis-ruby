@@ -1,4 +1,4 @@
-# Peredis
+# Peredis (Ruby)
 
 The aim of this project is to recreate a Redis-like database, with a
 persistent storage mechanism, applied after every transaction.
