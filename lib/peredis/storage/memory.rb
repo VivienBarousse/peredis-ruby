@@ -43,6 +43,17 @@ module Peredis
       end
 
       # -
+      # Integers
+      # -
+
+      def incr(key)
+        value = Integer(get(key) || 0)
+        new_value = value + 1
+        set(key, new_value.to_s)
+        new_value
+      end
+
+      # -
       # Sets
       # -
 

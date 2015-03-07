@@ -154,6 +154,67 @@ describe Peredis::Storage::Memory do
       end
     end
 
+    describe "integers" do
+
+      let(:key) { "integer-key" }
+
+      describe "#incr" do
+
+        it "should increment the value by 1" do
+          subject.set(key, "2")
+          subject.incr(key)
+          expect(subject.get(key)).to eq("3")
+          subject.incr(key)
+          expect(subject.get(key)).to eq("4")
+        end
+
+        it "should return the value it just set" do
+          subject.set(key, "2")
+          expect(subject.incr(key)).to eq(3)
+          expect(subject.incr(key)).to eq(4)
+        end
+
+        context "when the number is negative" do
+          it "should increment the value by 1" do
+            subject.set(key, "-11")
+            subject.incr(key)
+            expect(subject.get(key)).to eq("-10")
+            subject.incr(key)
+            expect(subject.get(key)).to eq("-9")
+          end
+
+          it "should return the value it just set" do
+            subject.set(key, "-11")
+            expect(subject.incr(key)).to eq(-10)
+            expect(subject.incr(key)).to eq(-9)
+          end
+
+          it "should be able to go in the positive numbers" do
+            subject.set(key, "-1")
+            expect(subject.incr(key)).to eq(0)
+            expect(subject.incr(key)).to eq(1)
+          end
+        end
+
+        context "when the key doesn't exist" do
+          it "should set the value to 1" do
+            subject.incr(key)
+            expect(subject.get(key)).to eq("1")
+          end
+        end
+
+        context "when the key isn't a valid integer" do
+          it "should raise an error" do
+            subject.set(key, "a")
+            expect {
+              subject.incr(key)
+            }.to raise_error
+          end
+        end
+      end
+
+    end
+
     describe "sets" do
 
       let(:key) { "set-key" }
