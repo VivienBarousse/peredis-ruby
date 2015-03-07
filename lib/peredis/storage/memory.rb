@@ -42,6 +42,15 @@ module Peredis
         @keys[key] = value
       end
 
+      def mset(*args)
+        raise ArgumentError unless args.length % 2 == 0
+
+        (0..args.length - 1).step(2).each do |i|
+          set(args[i], args[i+1])
+        end
+        1
+      end
+
       # -
       # Integers
       # -

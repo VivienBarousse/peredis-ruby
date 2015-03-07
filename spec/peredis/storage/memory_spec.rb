@@ -151,6 +151,37 @@ describe Peredis::Storage::Memory do
             end
           end
         end
+
+        describe "#mset" do
+          let(:key1) { "string1" }
+          let(:key2) { "string2" }
+
+          it "should set the values" do
+            subject.mset(key1, "value1", key2, "value2")
+            expect(subject.get(key1)).to eq("value1")
+            expect(subject.get(key2)).to eq("value2")
+          end
+
+          context "when the keys already exist" do
+            it "should set the values" do
+              subject.set(key1, "foo")
+              subject.set(key2, "foo")
+              subject.mset(key1, "value1", key2, "value2")
+              expect(subject.get(key1)).to eq("value1")
+              expect(subject.get(key2)).to eq("value2")
+            end
+
+            context "and are of a different type" do
+              it "should set the values" do
+                subject.sadd(key1, "foo")
+                subject.sadd(key2, "foo")
+                subject.mset(key1, "value1", key2, "value2")
+                expect(subject.get(key1)).to eq("value1")
+                expect(subject.get(key2)).to eq("value2")
+              end
+            end
+          end
+        end
       end
     end
 
