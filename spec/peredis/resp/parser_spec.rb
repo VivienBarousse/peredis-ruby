@@ -104,6 +104,24 @@ describe Peredis::Resp::Parser do
     end
   end
 
+  describe "inline commands" do
+
+    let(:data) { "set foo bar" }
+
+    it "should parse it correctly" do
+      expect(subject.next).to eq(["set", "foo", "bar"])
+    end
+
+    context "single words" do
+      let(:data) { "ping" }
+
+      it "should parse it correctly" do
+        expect(subject.next).to eq(["ping"])
+      end
+    end
+
+  end
+
   describe "arrays" do
     let(:data) { "*2\r\n$3\r\nfoo\r\n$3\r\nbar\r\n" }
 

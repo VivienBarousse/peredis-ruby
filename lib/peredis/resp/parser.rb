@@ -7,7 +7,7 @@ module Peredis
       end
 
       def next
-        case input.read(1)
+        case char = input.read(1)
         when ':'
           next_integer
         when '+'
@@ -16,6 +16,8 @@ module Peredis
           next_bulk_string
         when '*'
           next_array
+        else
+          "#{char}#{input.readline}".split(/\s+/)
         end
       end
 
