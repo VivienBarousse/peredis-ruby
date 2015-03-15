@@ -23,13 +23,13 @@ describe Peredis::Storage::Memory do
         context "when the key exists" do
           it "should return true" do
             subject.set("key", "value")
-            expect(subject.exists("key")).to be(1)
+            expect(subject.exists("key")).to eq(1)
           end
         end
 
         context "when the key doesn't exist" do
           it "should return false" do
-            expect(subject.exists("key")).to be(0)
+            expect(subject.exists("key")).to eq(0)
           end
         end
       end
@@ -38,23 +38,23 @@ describe Peredis::Storage::Memory do
         context "when the key exists" do
           it "should return the number of deleted keys" do
             subject.set("key", "value")
-            expect(subject.del("key")).to be(1)
+            expect(subject.del("key")).to eq(1)
           end
 
           it "should delete the key" do
             subject.del("key")
-            expect(subject.exists("key")).to be(0)
+            expect(subject.exists("key")).to eq(0)
           end
         end
 
         context "when the key doesn't exist" do
           it "should return the numbers of deleted keys" do
-            expect(subject.del("key")).to be(0)
+            expect(subject.del("key")).to eq(0)
           end
 
           it "should not create the key" do
             subject.del("key")
-            expect(subject.exists("key")).to be(0)
+            expect(subject.exists("key")).to eq(0)
           end
         end
 
@@ -63,7 +63,7 @@ describe Peredis::Storage::Memory do
             subject.set("key", "value")
             subject.set("key1", "value1")
             subject.del("key")
-            expect(subject.exists("key1")).to be(1)
+            expect(subject.exists("key1")).to eq(1)
           end
         end
 
@@ -72,8 +72,8 @@ describe Peredis::Storage::Memory do
             subject.set("key", "value")
             subject.set("key1", "value1")
             subject.del("key", "key1")
-            expect(subject.exists("key")).to be(0)
-            expect(subject.exists("key1")).to be(0)
+            expect(subject.exists("key")).to eq(0)
+            expect(subject.exists("key1")).to eq(0)
           end
 
           it "should return the number of keys deleted" do
@@ -86,13 +86,13 @@ describe Peredis::Storage::Memory do
             it "should delete the existing keys" do
               subject.set("key", "value")
               subject.del("key", "key1")
-              expect(subject.exists("key")).to be(0)
+              expect(subject.exists("key")).to eq(0)
             end
 
             it "should not create the non-existing keys" do
               subject.set("key", "value")
               subject.del("key", "key1")
-              expect(subject.exists("key1")).to be(0)
+              expect(subject.exists("key1")).to eq(0)
             end
 
             it "should return just the number of deleted keys" do
@@ -331,7 +331,7 @@ describe Peredis::Storage::Memory do
 
           it "should not create the key" do
             subject.smembers(key)
-            expect(subject.exists(key)).to be(0)
+            expect(subject.exists(key)).to eq(0)
           end
         end
       end
@@ -340,14 +340,14 @@ describe Peredis::Storage::Memory do
         context "when the value is in the set" do
           it "should return true" do
             subject.sadd(key, "value")
-            expect(subject.sismember(key, "value")).to be(true)
+            expect(subject.sismember(key, "value")).to eq(true)
           end
         end
 
         context "when the value is not in the set" do
           it "should return false" do
             subject.sadd(key, "another_value")
-            expect(subject.sismember(key, "value")).to be(false)
+            expect(subject.sismember(key, "value")).to eq(false)
           end
         end
 
@@ -358,7 +358,7 @@ describe Peredis::Storage::Memory do
 
           it "should not create the key" do
             subject.sismember(key, "value")
-            expect(subject.exists(key)).to be(0)
+            expect(subject.exists(key)).to eq(0)
           end
         end
 
@@ -392,7 +392,7 @@ describe Peredis::Storage::Memory do
 
           it "should not create it" do
             subject.scard(key)
-            expect(subject.exists(key)).to be(0)
+            expect(subject.exists(key)).to eq(0)
           end
         end
 
