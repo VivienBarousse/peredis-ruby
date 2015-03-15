@@ -85,6 +85,13 @@ module Peredis
         find_set(key).count
       end
 
+      def spop(key)
+        set = find_set(key)
+        value = set.to_a.sample
+        set.delete(value)
+        return value
+      end
+
       # -
       # Lists
       # -

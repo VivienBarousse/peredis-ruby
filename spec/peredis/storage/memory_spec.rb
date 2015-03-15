@@ -405,6 +405,44 @@ describe Peredis::Storage::Memory do
           end
         end
       end
+
+      describe "#spop" do
+        it "should return a random member from the set" do
+          subject.sadd(key, "foo")
+          subject.sadd(key, "bar")
+          subject.sadd(key, "baz")
+          expect(%w(foo bar baz)).to include(subject.spop(key))
+        end
+
+        it "should remove the returned element from the set" do
+          subject.sadd(key, "foo")
+          subject.sadd(key, "bar")
+          subject.sadd(key, "baz")
+          returned = subject.spop(key)
+          expect(subject.scard(key)).to eq(2)
+          expect(subject.sismember(key, returned)).to eq(false)
+        end
+
+        context "when the key doesn't exist" do
+          it "should return nil" do
+            expect(subject.spop(key)).to eq(nil)
+          end
+
+          it "should not create the key" do
+            subject.spop(key)
+            expect(subject.exists(key)).to eq(0)
+          end
+        end
+
+        context "when the key is of the wrong type" do
+          it "should raise an error" do
+            subject.set(key, "foo")
+            expect {
+              subject.spop(key)
+            }.to raise_error
+          end
+        end
+      end
     end
 
     describe "lists" do
