@@ -406,5 +406,75 @@ describe Peredis::Storage::Memory do
         end
       end
     end
+
+    describe "lists" do
+      describe "#lpush" do
+        let(:key) { "list" }
+
+        it "should prepend the value" do
+          subject.lpush(key, "foo")
+          subject.lpush(key, "bar")
+          expect(subject.lindex(key, 0)).to eq("bar")
+          expect(subject.lindex(key, 1)).to eq("foo")
+        end
+
+        it "should return the size of the list post modification" do
+          expect(subject.lpush(key, "foo")).to eq(1)
+          expect(subject.lpush(key, "foo")).to eq(2)
+          expect(subject.lpush(key, "foo")).to eq(3)
+        end
+
+        context "when the key doesn't exist" do
+          it "should create it" do
+            expect(subject.exists(key)).to eq(0)
+            subject.lpush(key, "foo")
+            expect(subject.exists(key)).to eq(1)
+          end
+        end
+
+        context "when the key is of the wrong type" do
+          it "should raise an error" do
+            subject.set(key, "foo")
+            expect {
+              subject.lpush(key, "bar")
+            }.to raise_error
+          end
+        end
+      end
+
+      describe "#rpush" do
+        let(:key) { "list" }
+
+        it "should prepend the value" do
+          subject.rpush(key, "foo")
+          subject.rpush(key, "bar")
+          expect(subject.lindex(key, 0)).to eq("foo")
+          expect(subject.lindex(key, 1)).to eq("bar")
+        end
+
+        it "should return the size of the list post modification" do
+          expect(subject.rpush(key, "foo")).to eq(1)
+          expect(subject.rpush(key, "foo")).to eq(2)
+          expect(subject.rpush(key, "foo")).to eq(3)
+        end
+
+        context "when the key doesn't exist" do
+          it "should create it" do
+            expect(subject.exists(key)).to eq(0)
+            subject.rpush(key, "foo")
+            expect(subject.exists(key)).to eq(1)
+          end
+        end
+
+        context "when the key is of the wrong type" do
+          it "should raise an error" do
+            subject.set(key, "foo")
+            expect {
+              subject.rpush(key, "bar")
+            }.to raise_error
+          end
+        end
+      end
+    end
   end
 end

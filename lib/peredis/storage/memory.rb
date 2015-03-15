@@ -85,15 +85,44 @@ module Peredis
         find_set(key).count
       end
 
+      # -
+      # Lists
+      # -
+
+      def lpush(key, value)
+        list = find_list(key, true)
+        list.insert(0, value)
+        return list.size
+      end
+
+      def rpush(key, value)
+        list = find_list(key, true)
+        list << value
+        return list.size
+      end
+
+      def lindex(key, index)
+        list = find_list(key, false)
+        return list[index]
+      end
+
       private
 
       def find_set(key, create = false)
-        value = @keys[key] || Set.new
+        find_key_of_type(key, Set, create)
+      end
+
+      def find_list(key, create = false)
+        find_key_of_type(key, Array, create)
+      end
+
+      def find_key_of_type(key, klass, create = false)
+        value = @keys[key] || klass.new
         if create && !@keys.has_key?(key)
           @keys[key] = value
         end
 
-        raise "Unexpected key type" unless value.is_a?(Set)
+        raise "Unexpected key type" unless value.is_a?(klass)
         value
       end
 
