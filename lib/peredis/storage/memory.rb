@@ -106,6 +106,12 @@ module Peredis
         return list[index]
       end
 
+      def lpop(key)
+        list = find_list(key, false)
+        value = list && list.shift
+        return value
+      end
+
       private
 
       def find_set(key, create = false)

@@ -475,6 +475,49 @@ describe Peredis::Storage::Memory do
           end
         end
       end
+
+      describe "#lpop" do
+        let(:key) { "list" }
+
+        it "should return the first value in the list" do
+          subject.rpush(key, "foo")
+          subject.rpush(key, "bar")
+          expect(subject.lpop(key)).to eq("foo")
+        end
+
+        it "should delete the first value in the list" do
+          subject.rpush(key, "foo")
+          subject.rpush(key, "bar")
+          subject.lpop(key)
+          expect(subject.lindex(key, 0)).to eq("bar")
+        end
+
+        context "when the key doesn't exist" do
+          it "should return nil" do
+            expect(subject.lpop(key)).to eq(nil)
+          end
+
+          it "should not create it" do
+            subject.lpop(key)
+            expect(subject.exists(key)).to eq(0)
+          end
+        end
+
+        context "when the key is of the wrong type" do
+          it "should raise an error" do
+            subject.set(key, "foo")
+            expect {
+              subject.lpop(key)
+            }.to raise_error
+          end
+
+          it "should not change it" do
+            subject.set(key, "foo")
+            subject.lpop(key) rescue nil
+            expect(subject.get(key)).to eq("foo")
+          end
+        end
+      end
     end
   end
 end
