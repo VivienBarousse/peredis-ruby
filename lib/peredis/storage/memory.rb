@@ -119,6 +119,11 @@ module Peredis
         return value
       end
 
+      def lrange(key, start, _end)
+        list = find_list(key, false)
+        return list[start.._end] || []
+      end
+
       private
 
       def find_set(key, create = false)

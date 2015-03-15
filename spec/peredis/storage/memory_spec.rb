@@ -556,6 +556,89 @@ describe Peredis::Storage::Memory do
           end
         end
       end
+
+      describe "#lrange" do
+        let(:key) { "list" }
+
+        it "should return the range" do
+          subject.rpush(key, "foo1")
+          subject.rpush(key, "foo2")
+          subject.rpush(key, "foo3")
+          subject.rpush(key, "foo4")
+          subject.rpush(key, "foo5")
+          expect(subject.lrange(key, 1, 3)).to eq(["foo2", "foo3", "foo4"])
+        end
+
+        context "when the start is lower then one" do
+          it "should count from the end of the array" do
+            subject.rpush(key, "foo1")
+            subject.rpush(key, "foo2")
+            subject.rpush(key, "foo3")
+            subject.rpush(key, "foo4")
+            subject.rpush(key, "foo5")
+            expect(subject.lrange(key, -2, 4)).to eq(["foo4", "foo5"])
+          end
+        end
+
+        context "when the end is lower than one" do
+          it "should count from the end of the array" do
+            subject.rpush(key, "foo1")
+            subject.rpush(key, "foo2")
+            subject.rpush(key, "foo3")
+            subject.rpush(key, "foo4")
+            subject.rpush(key, "foo5")
+            expect(subject.lrange(key, 0, -3)).to eq(["foo1", "foo2", "foo3"])
+          end
+        end
+
+        context "when the end is higher than the length of the list" do
+          it "should stop at the end of the list" do
+            subject.rpush(key, "foo1")
+            subject.rpush(key, "foo2")
+            subject.rpush(key, "foo3")
+            subject.rpush(key, "foo4")
+            subject.rpush(key, "foo5")
+            expect(subject.lrange(key, 3, 99)).to eq(["foo4", "foo5"])
+          end
+        end
+
+        context "when the start is higher than the end" do
+          it "should return an empty list" do
+            subject.rpush(key, "foo1")
+            subject.rpush(key, "foo2")
+            subject.rpush(key, "foo3")
+            subject.rpush(key, "foo4")
+            subject.rpush(key, "foo5")
+            expect(subject.lrange(key, 3, 2)).to eq([])
+          end
+        end
+
+        context "when the start and the end are higher than the length of the list" do
+          it "should return an empty list" do
+            subject.rpush(key, "foo1")
+            subject.rpush(key, "foo2")
+            subject.rpush(key, "foo3")
+            subject.rpush(key, "foo4")
+            subject.rpush(key, "foo5")
+            expect(subject.lrange(key, 10, 100)).to eq([])
+          end
+        end
+
+        context "when the key doesn't exist" do
+          it "should return an empty list" do
+            expect(subject.lrange(key, 0, 100)).to eq([])
+          end
+        end
+
+        context "when the key is of the wrong type" do
+          it "should raise an error" do
+            subject.set(key, "foo")
+            expect {
+              subject.lrange(key, 0, 100)
+            }.to raise_error
+          end
+        end
+      end
     end
   end
 end
