@@ -624,6 +624,17 @@ describe Peredis::Storage::Memory do
           end
         end
 
+        context "when the start and end indexes are given as string" do
+          it "should work as if they were integers" do
+            subject.rpush(key, "foo1")
+            subject.rpush(key, "foo2")
+            subject.rpush(key, "foo3")
+            subject.rpush(key, "foo4")
+            subject.rpush(key, "foo5")
+            expect(subject.lrange(key, "1", "3")).to eq(["foo2", "foo3", "foo4"])
+          end
+        end
+
         context "when the key doesn't exist" do
           it "should return an empty list" do
             expect(subject.lrange(key, 0, 100)).to eq([])

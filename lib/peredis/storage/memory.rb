@@ -121,7 +121,7 @@ module Peredis
 
       def lrange(key, start, _end)
         list = find_list(key, false)
-        return list[start.._end] || []
+        return list[Integer(start)..Integer(_end)] || []
       end
 
       private
